@@ -3,9 +3,8 @@ package services
 import com.google.inject.{Inject, Singleton}
 import models.PlanetType
 import models.attributes.Attributes
-import models.entities.{Entity, PlanetEntity, StarEntity}
-import models.location.{Coordinates, ExternalLocation}
-import play.api.Logger
+import models.entities.{PlanetEntity, StarEntity}
+import models.location.Coordinates
 import play.api.libs.json.JsValue
 
 import scala.collection.immutable.ListMap
@@ -28,15 +27,20 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
   def generatePrimaryAttributes(coordinates: Coordinates): Attributes = {
 
     def generateBaseAttribute(attributes: Attributes, key: String, max: Int, min: Int = 0): Attributes = {
-      attributes.addOrUpdate(key, randomService.generateRandomInteger(max, min))
+      val result: Int = if (attributes.getAttribute[Int](Attributes.size).exists(_ < 7)) valueOrMax(randomService.generateRandomInteger(max), randomService.generateRandomInteger(max))
+      else randomService.generateRandomInteger(max)
+      attributes.addOrUpdate(key, result)
     }
 
     def generateSize(): Attributes = {
       if (coordinates.distanceFromOrigin() < 7) generateBaseAttribute(Attributes(Map.empty[String, JsValue]), Attributes.size, 6, 1)
-      else generateBaseAttribute(Attributes(Map.empty[String, JsValue]), Attributes.size, 10, 1)
+      else {
+        val result = generateBaseAttribute(Attributes(Map.empty[String, JsValue]), Attributes.size, 10, 1)
+        result
+      }
     }
 
-    primaryAttributes.foldLeft(generateSize()){ (attributes, key) =>
+    primaryAttributes.foldLeft(generateSize()) { (attributes, key) =>
       generateBaseAttribute(attributes, key, 6)
     }
   }
@@ -45,12 +49,13 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
     val atmosphereCondition: Condition = attributes => {
       val size = attributes.getOrException[Int](Attributes.size)
       if (size > 6) (6, 6)
-      else (size, 0)
+      else if (size < 2) (size, 0)
+      else (6, 1)
     }
 
     val temperatureCondition: Condition = attributes => {
       val baseTemp = valueOrMin(parent.size - (coordinates.distanceFromOrigin() / 2).toInt, 0)
-      val modifier = (attributes.getOrException[Int](Attributes.geology) + attributes.getOrException[Int](Attributes.atmosphere))/2
+      val modifier = (attributes.getOrException[Int](Attributes.geology) + attributes.getOrException[Int](Attributes.atmosphere)) / 2
       (valueOrMax(baseTemp + modifier, 6), valueOrMax(baseTemp, 6))
     }
 
@@ -66,12 +71,14 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
       val radioactivity = attributes.getOrException[Int](Attributes.radioactivity)
       val geology = attributes.getOrException[Int](Attributes.geology)
 
-      if (water > 1 && radioactivity < 5 && geology < 5) (6, 0)
+      if (water > 2 && radioactivity < 5 && geology < 5) (6, 1)
+      else if (water == 2 && radioactivity < 5 && geology < 5) (6, 0)
+      else if (water == 1 && radioactivity < 5 && geology < 5) (3, 0)
       else (0, 0)
     }
 
     val toxicityCondition: Condition = attributes => {
-      if (attributes.getOrException[Int](Attributes.atmosphere) != 0) (6,0)
+      if (attributes.getOrException[Int](Attributes.atmosphere) != 0) (6, 0)
       else (0, 0)
     }
 
@@ -104,7 +111,7 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
       }
     }
 
-    secondaryAttributes.foldLeft(generatePrimaryAttributes(coordinates)){ (attributes, x) =>
+    secondaryAttributes.foldLeft(generatePrimaryAttributes(coordinates)) { (attributes, x) =>
       generateConditionalAttribute(attributes, x._1)(x._2)
     }
   }
@@ -121,7 +128,7 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
     }
 
     PlanetType.extremeTypes.find(_.matchingType(attributes)).getOrElse {
-      if (isHabitable) PlanetType.habitableTypes.find(_.matchingType(attributes)).get
+      if (isHabitable) selectValidType(PlanetType.habitableTypes.filter(_.matchingType(attributes))).getOrElse(PlanetType.Plains)
       else selectValidType(PlanetType.mainTypes.filter(_.matchingType(attributes))).getOrElse(PlanetType.Barren)
     }
   }

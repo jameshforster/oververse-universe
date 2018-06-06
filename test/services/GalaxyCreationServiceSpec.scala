@@ -10,7 +10,7 @@ class GalaxyCreationServiceSpec extends UnitSpec with GuiceOneAppPerSuite {
     lazy val service = app.injector.instanceOf[GalaxyCreationService]
 
     "return a valid galaxy" in {
-      service.createGalaxy("testGalaxy", 20, 25, 25, 5) shouldBe a [Galaxy]
+      service.createGalaxy("testGalaxy", 5, 25, 25, 5) shouldBe a [Galaxy]
     }
   }
 }

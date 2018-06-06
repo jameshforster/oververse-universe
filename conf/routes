@@ -11,3 +11,4 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 # Admin routes
 POST    /admin/create-galaxy        controllers.AdminController.generateGalaxy
+POST    /admin/planet-query         controllers.AdminController.planetQuery

@@ -14,17 +14,18 @@ trait PlanetType {
 
 object PlanetType {
   val extremeTypes: Seq[PlanetType] = Seq(GasGiant, Toxic, Unstable, Radioactive, DeathWorld, Crater)
-  val habitableTypes: Seq[PlanetType] = Seq(Island, Gaia, Garden, Jungle, Marsh, Plains)
+  val habitableTypes: Seq[PlanetType] = Seq(Island, Jungle, Marsh, Gaia, Garden)
   val mainTypes: Seq[PlanetType] = Seq(Desert, Ocean, Arctic, Frozen, Volcanic, Magma, Mountainous, Cavernous)
-  val validTypes: Seq[PlanetType] = extremeTypes ++ habitableTypes ++ mainTypes
+  val validTypes: Seq[PlanetType] = extremeTypes ++ habitableTypes ++ mainTypes ++ Seq(Plains)
   val habitableConditions: Seq[Attributes => Boolean] = Seq(
     attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(4, 2)),
-    attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(2, 0)),
+    attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(4, 0)),
     attributes => attributes.getAttribute[Int](Attributes.radioactivity).exists(attributeBetween(2, 0)),
     attributes => attributes.getAttribute[Int](Attributes.toxicity).exists(attributeBetween(2, 0)),
     attributes => attributes.getAttribute[Int](Attributes.atmosphere).exists(attributeBetween(4, 2)),
     attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 1),
-    attributes => attributes.getAttribute[Int](Attributes.breathable).exists(_ > 1)
+    attributes => attributes.getAttribute[Int](Attributes.breathable).exists(_ > 1),
+    attributes => attributes.getAttribute[Int](Attributes.water).exists(_ < 6)
   )
 
   private val writes = new Writes[PlanetType] {
@@ -99,32 +100,35 @@ object PlanetType {
   object Jungle extends PlanetType {
     override val name: String = "Jungle"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.water).contains(4),
+      attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(4, 3)),
       attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ > 2),
-      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 4)
+      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 3),
     )
   }
 
   object Marsh extends PlanetType {
     override val name: String = "Marsh"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.water).contains(4),
-      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 4)
+      attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(4, 3)),
+      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 3)
     )
   }
 
   object Garden extends PlanetType {
     override val name: String = "Garden"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 4),
-      attributes => attributes.getAttribute[Int](Attributes.danger).exists(_ < 2)
+      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 3),
+      attributes => attributes.getAttribute[Int](Attributes.water).exists(_ < 5),
+      attributes => attributes.getAttribute[Int](Attributes.danger).exists(_ < 2),
+      attributes => attributes.getAttribute[Int](Attributes.geology).exists(_ < 2)
     )
   }
 
   object Gaia extends PlanetType {
     override val name: String = "Gaia"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.geology).contains(2)
+      attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(3, 2)),
+      attributes => attributes.getAttribute[Int](Attributes.water).exists(_ < 5),
     )
   }
 

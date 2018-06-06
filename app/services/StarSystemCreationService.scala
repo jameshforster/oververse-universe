@@ -34,9 +34,9 @@ class StarSystemCreationService @Inject()(randomService: RandomService, planetCr
         planets
     }
 
-    def applyChanceToAll(planets: Seq[PlanetEntity], x: Int = -7, y: Int = -7): Seq[PlanetEntity] = {
-      if (x > 7) planets
-      else if (y >= 7) applyChanceToAll(applyChance(planets, x, y), x + 1)
+    def applyChanceToAll(planets: Seq[PlanetEntity], x: Int = -8, y: Int = -8): Seq[PlanetEntity] = {
+      if (x > 8) planets
+      else if (y >= 8) applyChanceToAll(applyChance(planets, x, y), x + 1)
       else applyChanceToAll(applyChance(planets, x, y), x, y + 1)
 
     }

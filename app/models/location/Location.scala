@@ -14,10 +14,10 @@ trait Location {
 
 object Location {
 
-  def apply(sector: Coordinates, system: Coordinates, area: Coordinates, position: Option[Coordinates], insideEntity: Option[Entity]): Location = {
+  def apply(galactic: Coordinates, system: Coordinates, area: Coordinates, position: Option[Coordinates], insideEntity: Option[Entity]): Location = {
     (position, insideEntity) match {
       case (Some(positionVal), Some(entityVal)) => InternalLocation(positionVal, entityVal)
-      case _ => ExternalLocation(sector, system, area)
+      case _ => ExternalLocation(galactic, system, area)
     }
   }
 
