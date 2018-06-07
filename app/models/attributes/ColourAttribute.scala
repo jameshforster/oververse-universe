@@ -32,8 +32,8 @@ object ColourAttribute {
   private val validColours = Seq(red, blue, white, yellow, black, neutron, brown)
   val dwarfColours = Seq(white, brown)
   val mainColours = Map (3 -> red, 4 -> red, 5 -> yellow, 6 -> blue)
-  val giantColours = Seq(red, yellow)
-  val superGiantColours = Seq(blue, red)
+  val giantColours = Seq(red, yellow, red, yellow, red, yellow, red, yellow, red, yellow, neutron)
+  val superGiantColours = Seq(blue, red, blue, red, blue, red, blue, red, blue, red, black)
 
   def apply (input: String): ColourAttribute = {
     validColours.find(_.name == input).getOrElse(throw new InvalidColourException(input))
