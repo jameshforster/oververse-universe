@@ -20,6 +20,7 @@ object Entity {
     entityTypeVal match {
       case `star` => StarEntity(nameVal, attributesVal, locationVal.sector, signature)
       case `planet` => PlanetEntity(nameVal, attributesVal, locationVal.sector, locationVal.system, signature)
+      case `planetRegion` => PlanetRegionEntity(nameVal, attributesVal, locationVal.area)
       case  unknown => throw new UnknownEntityException(unknown)
     }
   }
@@ -48,4 +49,5 @@ object Entity {
 
   val star = "star"
   val planet = "planet"
+  val planetRegion = "planetRegion"
 }

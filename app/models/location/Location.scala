@@ -17,6 +17,7 @@ object Location {
   def apply(galactic: Coordinates, system: Coordinates, area: Coordinates, position: Option[Coordinates], insideEntity: Option[Entity]): Location = {
     (position, insideEntity) match {
       case (Some(positionVal), Some(entityVal)) => InternalLocation(positionVal, entityVal)
+      case (_, Some(entityVal)) => SurfaceLocation(entityVal, area)
       case _ => ExternalLocation(galactic, system, area)
     }
   }
