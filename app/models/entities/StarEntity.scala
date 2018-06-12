@@ -3,9 +3,9 @@ package models.entities
 import models.attributes.{Attributes, ColourAttribute}
 import models.location.{Coordinates, ExternalLocation, Location}
 
-case class StarEntity(name: String, attributes: Attributes, coordinates: Coordinates, signature: BigDecimal) extends Entity {
+case class StarEntity(galaxyName: String, name: String, attributes: Attributes, coordinates: Coordinates, signature: BigDecimal) extends Entity {
   override val entityType: String = Entity.star
-  override val location: Location = ExternalLocation(sector = coordinates, system = Coordinates(0, 0), area = Coordinates(0, 0))
+  override val location: Location = ExternalLocation(galactic = coordinates, system = Coordinates(0, 0), area = Coordinates(0, 0))
 
   val size: Int = attributes.getOrException[Int](Attributes.size)
   val colour: ColourAttribute = ColourAttribute(attributes.getOrException[String](Attributes.colour))

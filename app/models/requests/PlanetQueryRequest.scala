@@ -1,9 +1,9 @@
 package models.requests
 
-import models.entities.PlanetEntity
-import models.location.Coordinates
+import models.entities.{Entity, PlanetEntity}
+import models.location.{Coordinates, ExternalLocation}
 import models.{Galaxy, PlanetType}
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 
 case class PlanetQueryRequest(galaxyName: String,
                               by: String,
@@ -11,21 +11,24 @@ case class PlanetQueryRequest(galaxyName: String,
                               planetType: Option[PlanetType],
                               galacticCoordinates: Option[Coordinates],
                               systemCoordinates: Option[Coordinates]) {
-  def query(galaxy: Galaxy): Seq[PlanetEntity] = {
-    val planets = galaxy.starSystems.flatMap(_.majorOrbitals.flatMap {
-      case e: PlanetEntity => Some(e)
-      case _ => None
-    })
 
-    by match {
-      case "name" if name.isDefined => planets.filter(_.name == name.get)
-      case "type" if planetType.isDefined => planets.filter(_.planetType == planetType.get)
-      case "galacticLocation" if galacticCoordinates.isDefined => planets.filter(_.galacticCoordinates == galacticCoordinates.get)
-      case "coordinates" if galacticCoordinates.isDefined && systemCoordinates.isDefined => planets.filter{
-        planet => planet.galacticCoordinates == galacticCoordinates.get && planet.orbitalCoordinates == systemCoordinates.get
+  def query(): JsObject = {
+    JsObject(
+      Map(
+        "galaxyName" -> Json.toJson(galaxyName),
+        "entityType" -> Json.toJson(Entity.planet)
+      ) ++ {
+        by match {
+          case "name" if name.isDefined => Map("name" -> Json.toJson(name.get))
+          case "type" if planetType.isDefined => Map("attributes.attributes.planetType" -> Json.toJson(planetType.get))
+          case "galacticLocation" if galacticCoordinates.isDefined => Map("location.galactic" -> Json.toJson(galacticCoordinates.get))
+          case "location" if galacticCoordinates.isDefined && systemCoordinates.isDefined => Map(
+            "location" -> Json.toJson(ExternalLocation(galacticCoordinates.get, systemCoordinates.get, Coordinates(0,0)))
+          )
+          case _ => Map[String, JsValue]()
+        }
       }
-      case _ => planets
-    }
+    )
   }
 }
 

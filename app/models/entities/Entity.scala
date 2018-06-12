@@ -7,6 +7,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 trait Entity {
+  val galaxyName: String
   val name: String
   val entityType: String
   val attributes: Attributes
@@ -16,17 +17,18 @@ trait Entity {
 
 object Entity {
 
-  def apply(nameVal: String, entityTypeVal: String, attributesVal: Attributes, locationVal: Location, signature: BigDecimal): Entity = {
+  def apply(galaxyNameVal: String, nameVal: String, entityTypeVal: String, attributesVal: Attributes, locationVal: Location, signature: BigDecimal): Entity = {
     entityTypeVal match {
-      case `star` => StarEntity(nameVal, attributesVal, locationVal.sector, signature)
-      case `planet` => PlanetEntity(nameVal, attributesVal, locationVal.sector, locationVal.system, signature)
-      case `planetRegion` => PlanetRegionEntity(nameVal, attributesVal, locationVal.area)
-      case  unknown => throw new UnknownEntityException(unknown)
+      case `star` => StarEntity(galaxyNameVal, nameVal, attributesVal, locationVal.galactic, signature)
+      case `planet` => PlanetEntity(galaxyNameVal, nameVal, attributesVal, locationVal.galactic, locationVal.system, signature)
+      case `planetRegion` => PlanetRegionEntity(galaxyNameVal, nameVal, attributesVal, locationVal.area)
+      case unknown => throw new UnknownEntityException(unknown)
     }
   }
 
   private val writes = new Writes[Entity] {
     override def writes(o: Entity): JsValue = Json.obj(
+      "galaxyName" -> o.galaxyName,
       "name" -> o.name,
       "entityType" -> o.entityType,
       "attributes" -> o.attributes,
@@ -37,7 +39,8 @@ object Entity {
 
   private val reads = new Reads[Entity] {
     override def reads(json: JsValue): JsResult[Entity] = (
-      (JsPath \ "name").read[String] and
+      (JsPath \ "galaxyName").read[String] and
+        (JsPath \ "name").read[String] and
         (JsPath \ "entityType").read[String] and
         (JsPath \ "attributes").read[Attributes] and
         (JsPath \ "location").read[Location] and

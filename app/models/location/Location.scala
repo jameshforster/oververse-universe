@@ -5,7 +5,7 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 trait Location {
-  val sector: Coordinates
+  val galactic: Coordinates
   val system: Coordinates
   val area: Coordinates
   val optPosition: Option[Coordinates]
@@ -23,7 +23,7 @@ object Location {
   }
 
   private val writes: Writes[Location] = (o: Location) => Json.obj(
-    "sector" -> o.sector,
+    "galactic" -> o.galactic,
     "system" -> o.system,
     "area" -> o.area,
     "position" -> o.optPosition,
@@ -31,7 +31,7 @@ object Location {
   )
 
   private val reads: Reads[Location] = (json: JsValue) => (
-    (JsPath \ "sector").read[Coordinates] and
+    (JsPath \ "galactic").read[Coordinates] and
       (JsPath \ "system").read[Coordinates] and
       (JsPath \ "area").read[Coordinates] and
       (JsPath \ "position").readNullable[Coordinates] and

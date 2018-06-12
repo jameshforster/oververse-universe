@@ -6,12 +6,12 @@ import models.Galaxy
 import models.requests.{PlanetQueryRequest, StarQueryRequest, SystemQueryRequest}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import services.GalaxyCreationService
+import services.{GalaxyCreationService, QueryService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class QueryController @Inject()(val controllerComponents: ControllerComponents, galaxyCreationService: GalaxyCreationService, mongoConnector: MongoConnector) extends BackendController {
+class QueryController @Inject()(val controllerComponents: ControllerComponents, queryService: QueryService, mongoConnector: MongoConnector) extends BackendController {
 
   def query(queryType: String): Action[AnyContent] = {
     queryType match {
@@ -31,9 +31,8 @@ class QueryController @Inject()(val controllerComponents: ControllerComponents, 
   private val planetQuery: Action[AnyContent] = {
     JsonAction.async[PlanetQueryRequest] {
       model =>
-        mongoConnector.findData[Galaxy]("galaxies", JsObject(Map("galaxyName" -> Json.toJson(model.galaxyName)))).map {
-          case Some(galaxy) => Ok(Json.toJson(model.query(galaxy)))
-          case _ => NotFound("Invalid galaxy name!")
+        queryService.queryPlanets(model).map { planets =>
+          Ok(Json.toJson(planets))
         }
     }
   }
@@ -41,9 +40,8 @@ class QueryController @Inject()(val controllerComponents: ControllerComponents, 
   private val systemQuery: Action[AnyContent] = {
     JsonAction.async[SystemQueryRequest] {
       model =>
-        mongoConnector.findData[Galaxy]("galaxies", JsObject(Map("galaxyName" -> Json.toJson(model.galaxyName)))).map {
-          case Some(galaxy) => Ok(Json.toJson(model.query(galaxy)))
-          case _ => NotFound("Invalid galaxy name!")
+        queryService.querySystems(model).map { systems =>
+          Ok(Json.toJson(systems))
         }
     }
   }
@@ -51,9 +49,8 @@ class QueryController @Inject()(val controllerComponents: ControllerComponents, 
   private val starQuery: Action[AnyContent] = {
     JsonAction.async[StarQueryRequest] {
       model =>
-        mongoConnector.findData[Galaxy]("galaxies", JsObject(Map("galaxyName" -> Json.toJson(model.galaxyName)))).map {
-          case Some(galaxy) => Ok(Json.toJson(model.query(galaxy)))
-          case _ => NotFound("Invalid galaxy name!")
+        queryService.queryStars(model).map { stars =>
+          Ok(Json.toJson(stars))
         }
     }
   }

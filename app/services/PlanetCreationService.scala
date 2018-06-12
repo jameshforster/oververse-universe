@@ -133,10 +133,10 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
     }
   }
 
-  def createPlanet(star: StarEntity, orbitalCoordinates: Coordinates, name: String = "Unnamed World"): PlanetEntity = {
+  def createPlanet(galaxyName: String, star: StarEntity, orbitalCoordinates: Coordinates, name: String = "Unnamed World"): PlanetEntity = {
     val attributes = generateSecondaryAttributes(star, orbitalCoordinates)
     val planetType = generateType(attributes)
 
-    PlanetEntity(name, attributes.addOrUpdate(Attributes.planetType, planetType), star.coordinates, orbitalCoordinates, attributes.getOrException[Int](Attributes.size) * 10)
+    PlanetEntity(galaxyName, name, attributes.addOrUpdate(Attributes.planetType, planetType), star.coordinates, orbitalCoordinates, attributes.getOrException[Int](Attributes.size) * 10)
   }
 }
