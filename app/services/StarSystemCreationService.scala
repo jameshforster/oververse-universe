@@ -51,6 +51,6 @@ class StarSystemCreationService @Inject()(randomService: RandomService, planetCr
       createPlanets(galaxyName, star, planetChance).sortWith((x, y) => x.orbitalCoordinates.distanceFromOrigin() > y.orbitalCoordinates.distanceFromOrigin())
     } else Seq()
 
-    StarSystem(star, planets, Seq())
+    StarSystem(star, planets, Seq(), Seq())
   }
 }

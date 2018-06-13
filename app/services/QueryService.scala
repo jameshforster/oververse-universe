@@ -3,7 +3,7 @@ package services
 import com.google.inject.Inject
 import connectors.MongoConnector
 import models.StarSystem
-import models.entities.{Entity, PlanetEntity, StarEntity}
+import models.entities.{Entity, PlanetEntity, StarEntity, StationEntity}
 import models.location.Coordinates
 import models.requests.{PlanetQueryRequest, StarQueryRequest, SystemQueryRequest}
 import play.api.Logger
@@ -44,7 +44,10 @@ class QueryService @Inject()(mongoConnector: MongoConnector) {
     def getSystems(entities: Seq[Entity]): Seq[StarSystem] = {
       getStars(entities).map { star =>
         val matchingEntities = entities.filter(entity => entity.location.galactic == star.location.galactic && !entity.isInstanceOf[StarEntity])
-        StarSystem(star, matchingEntities.filter(_.isInstanceOf[PlanetEntity]), matchingEntities.filterNot(entity => entity.isInstanceOf[PlanetEntity]))
+        StarSystem(star,
+          matchingEntities.filter(_.isInstanceOf[PlanetEntity]),
+          matchingEntities.filter(_.isInstanceOf[StationEntity]),
+          matchingEntities.filterNot(entity => entity.isInstanceOf[PlanetEntity] || entity.isInstanceOf[StationEntity]))
       }
     }
 

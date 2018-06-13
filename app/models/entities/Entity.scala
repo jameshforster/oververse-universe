@@ -53,4 +53,5 @@ object Entity {
   val star = "star"
   val planet = "planet"
   val planetRegion = "planetRegion"
+  val station = "station"
 }
