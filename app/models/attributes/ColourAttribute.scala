@@ -29,7 +29,7 @@ object ColourAttribute {
     override val name: String = "Brown"
   }
 
-  private val validColours = Seq(red, blue, white, yellow, black, neutron, brown)
+  private[attributes] val validColours = Seq(red, blue, white, yellow, black, neutron, brown)
   val dwarfColours = Seq(white, brown)
   val mainColours = Map (3 -> red, 4 -> red, 5 -> yellow, 6 -> blue)
   val giantColours = Seq(red, yellow, red, yellow, red, yellow, red, yellow, red, yellow, neutron)

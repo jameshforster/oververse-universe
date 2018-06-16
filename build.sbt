@@ -11,6 +11,7 @@ libraryDependencies += guice
 libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.13.0-play26"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
+coverageEnabled := true
 routesGenerator := InjectedRoutesGenerator
 
 // Adds additional packages into Twirl
