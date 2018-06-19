@@ -16,6 +16,10 @@ case class Attributes(attributes: Map[String, JsValue]) {
   def addOrUpdate[A](key: String, value: A)(implicit writes: Writes[A]): Attributes = {
     Attributes(attributes + (key -> Json.toJson(value)))
   }
+
+  def removeAttribute(key: String): Attributes = {
+    Attributes(attributes - key)
+  }
 }
 
 object Attributes {

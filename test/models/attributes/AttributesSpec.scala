@@ -137,4 +137,32 @@ class AttributesSpec extends UnitSpec {
       }
     }
   }
+
+  "Calling .removeAttribute" should {
+
+    "remove a single element" when {
+
+      "provided with the correct key" in {
+        testAttributes.removeAttribute("intKey") shouldBe Attributes(
+          Map(
+            "stringKey" -> Json.toJson("value"),
+            "coordinatesKey" -> Json.toJson(Coordinates(0, 0))
+          )
+        )
+      }
+    }
+
+    "not remove any elements" when {
+
+      "provided with a non-matching key" in {
+        testAttributes.removeAttribute("fakeKey") shouldBe Attributes(
+          Map(
+            "intKey" -> Json.toJson(1),
+            "stringKey" -> Json.toJson("value"),
+            "coordinatesKey" -> Json.toJson(Coordinates(0, 0))
+          )
+        )
+      }
+    }
+  }
 }
