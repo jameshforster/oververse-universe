@@ -17,4 +17,8 @@ object EntityHelper {
     .addOrUpdate(Attributes.water, 1)
     .addOrUpdate(Attributes.temperature, 1)
     .addOrUpdate(Attributes.planetType, "Barren")
+
+  def validStarAttributes(size: Int, colour: String): Attributes = Attributes.emptyAttributes
+    .addOrUpdate(Attributes.size, size)
+    .addOrUpdate(Attributes.colour, colour)
 }

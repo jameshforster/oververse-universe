@@ -21,7 +21,6 @@ object Entity {
     entityTypeVal match {
       case `star` => StarEntity(galaxyNameVal, nameVal, attributesVal, locationVal.galactic, signature)
       case `planet` => PlanetEntity(galaxyNameVal, nameVal, attributesVal, locationVal.galactic, locationVal.system, signature)
-      case `planetRegion` => PlanetRegionEntity(galaxyNameVal, nameVal, attributesVal, locationVal.area)
       case unknown => throw new UnknownEntityException(unknown)
     }
   }
