@@ -10,9 +10,10 @@ scalaVersion := "2.12.4"
 libraryDependencies += guice
 libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.13.0-play26"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
+libraryDependencies += "org.mockito" % "mockito-core" % "2.13.0" % Test
 
 coverageEnabled := true
-coverageExcludedPackages := ".*MongoConnector"
+coverageExcludedPackages := "<empty>;Reverse.*;.*MongoConnector;.*controllers.javascript;"
 routesGenerator := InjectedRoutesGenerator
 
 // Adds additional packages into Twirl

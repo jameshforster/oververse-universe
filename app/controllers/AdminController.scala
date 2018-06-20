@@ -1,7 +1,6 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import connectors.MongoConnector
 import models.requests.GenerateGalaxyRequest
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.GalaxyCreationService
@@ -9,7 +8,7 @@ import services.GalaxyCreationService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class AdminController @Inject()(val controllerComponents: ControllerComponents, galaxyCreationService: GalaxyCreationService, mongoConnector: MongoConnector) extends BackendController {
+class AdminController @Inject()(val controllerComponents: ControllerComponents, galaxyCreationService: GalaxyCreationService) extends BackendController {
 
   val generateGalaxy: Action[AnyContent] = {
     JsonAction.async[GenerateGalaxyRequest] {
