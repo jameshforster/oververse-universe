@@ -1,8 +1,8 @@
 package models.requests
 
-import models.entities.{Entity, PlanetEntity}
-import models.location.{Coordinates, ExternalLocation}
-import models.{Galaxy, PlanetType}
+import models.PlanetType
+import models.entities.Entity
+import models.location.{Coordinates, Location}
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 
 case class PlanetQueryRequest(galaxyName: String,
@@ -23,7 +23,7 @@ case class PlanetQueryRequest(galaxyName: String,
           case "type" if planetType.isDefined => Map("attributes.attributes.planetType" -> Json.toJson(planetType.get))
           case "galacticLocation" if galacticCoordinates.isDefined => Map("location.galactic" -> Json.toJson(galacticCoordinates.get))
           case "location" if galacticCoordinates.isDefined && systemCoordinates.isDefined => Map(
-            "location" -> Json.toJson(ExternalLocation(galacticCoordinates.get, systemCoordinates.get, Coordinates(0,0)))
+            "location" -> Json.toJson(Location(galacticCoordinates.get, systemCoordinates.get))
           )
           case _ => Map[String, JsValue]()
         }

@@ -1,13 +1,13 @@
 package models.entities
 
-import models.location.{Coordinates, ExternalLocation, Location}
+import models.location.{Coordinates, Location}
 
 trait OrbitalEntity extends Entity {
   val galacticCoordinates: Coordinates
   val orbitalCoordinates: Coordinates
 
-  override lazy val location: Location = ExternalLocation(
+  override lazy val location: Location = Location(
     galacticCoordinates,
-    orbitalCoordinates,
-    Coordinates(0,0))
+    orbitalCoordinates
+  )
 }

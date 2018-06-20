@@ -1,42 +1,15 @@
 package models.location
 
-import models.entities.Entity
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.json.{Json, OFormat}
 
-trait Location {
-  val galactic: Coordinates
-  val system: Coordinates
-  val area: Coordinates
-  val optPosition: Option[Coordinates]
-  val optInsideEntity: Option[Entity]
-}
+case class Location(galactic: Coordinates,
+                    system: Coordinates,
+                    region: Option[Coordinates] = None,
+                    area: Option[Coordinates] = None,
+                    position: Option[Coordinates] = None,
+                    layer: Option[Int] = None
+                   )
 
 object Location {
-
-  def apply(galactic: Coordinates, system: Coordinates, area: Coordinates, position: Option[Coordinates], insideEntity: Option[Entity]): Location = {
-    (position, insideEntity) match {
-      case (Some(positionVal), Some(entityVal)) => InternalLocation(positionVal, entityVal)
-      case (_, Some(entityVal)) => SurfaceLocation(entityVal, area)
-      case _ => ExternalLocation(galactic, system, area)
-    }
-  }
-
-  private val writes: Writes[Location] = (o: Location) => Json.obj(
-    "galactic" -> o.galactic,
-    "system" -> o.system,
-    "area" -> o.area,
-    "position" -> o.optPosition,
-    "insideEntity" -> o.optInsideEntity
-  )
-
-  private val reads: Reads[Location] = (json: JsValue) => (
-    (JsPath \ "galactic").read[Coordinates] and
-      (JsPath \ "system").read[Coordinates] and
-      (JsPath \ "area").read[Coordinates] and
-      (JsPath \ "position").readNullable[Coordinates] and
-      (JsPath \ "insideEntity").readNullable[Entity]
-    ) (Location.apply _).reads(json)
-
-  implicit val formats: Format[Location] = Format(reads, writes)
+  implicit val formats: OFormat[Location] = Json.format[Location]
 }
