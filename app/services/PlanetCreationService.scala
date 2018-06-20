@@ -137,6 +137,7 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
     val attributes = generateSecondaryAttributes(star, orbitalCoordinates)
     val planetType = generateType(attributes)
 
-    PlanetEntity(galaxyName, name, attributes.addOrUpdate(Attributes.planetType, planetType), star.coordinates, orbitalCoordinates, attributes.getOrException[Int](Attributes.size) * 10)
+    PlanetEntity(randomService.generateId(), galaxyName, name, attributes.addOrUpdate(Attributes.planetType, planetType),
+      star.coordinates, orbitalCoordinates, attributes.getOrException[Int](Attributes.size) * 10)
   }
 }

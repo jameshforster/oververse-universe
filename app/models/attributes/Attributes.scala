@@ -40,4 +40,5 @@ object Attributes {
   val temperature = "temperature"
   val parent = "parent"
   val planetType = "planetType"
+  val children = "children"
 }

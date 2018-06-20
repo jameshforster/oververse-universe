@@ -1,9 +1,10 @@
 package models.entities
+
 import models.PlanetType
 import models.attributes.Attributes
 import models.location.Coordinates
 
-case class PlanetEntity(galaxyName: String, name: String, attributes: Attributes, galacticCoordinates: Coordinates, orbitalCoordinates: Coordinates, signature: BigDecimal) extends OrbitalEntity {
+case class PlanetEntity(id: String, galaxyName: String, name: String, attributes: Attributes, galacticCoordinates: Coordinates, orbitalCoordinates: Coordinates, signature: BigDecimal) extends OrbitalEntity {
   override val entityType: String = Entity.planet
 
   val size: Int = attributes.getOrException[Int](Attributes.size)
@@ -18,4 +19,5 @@ case class PlanetEntity(galaxyName: String, name: String, attributes: Attributes
   val water: Int = attributes.getOrException[Int](Attributes.water)
   val temperature: Int = attributes.getOrException[Int](Attributes.temperature)
   val planetType: PlanetType = attributes.getOrException[String](Attributes.planetType)
+  val children: Option[List[String]] = attributes.getAttribute[List[String]](Attributes.children)
 }

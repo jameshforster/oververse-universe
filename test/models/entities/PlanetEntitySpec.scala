@@ -11,7 +11,7 @@ class PlanetEntitySpec extends UnitSpec {
     "not throw an exception" when {
 
       "provided with valid attributes" in {
-        PlanetEntity("galaxyName", "planetName", EntityHelper.validPlanetAttributes, Coordinates(1, 4), Coordinates(3, 6), 50) shouldBe an [Entity]
+        PlanetEntity("randomId", "galaxyName", "planetName", EntityHelper.validPlanetAttributes, Coordinates(1, 4), Coordinates(3, 6), 50) shouldBe an [Entity]
       }
     }
 
@@ -21,6 +21,7 @@ class PlanetEntitySpec extends UnitSpec {
 
         s"missing the ${x._1} attribute" in {
           the[InvalidAttributeException] thrownBy PlanetEntity(
+            "randomId",
             "galaxyName",
             "planetName",
             EntityHelper.validPlanetAttributes.removeAttribute(x._1),

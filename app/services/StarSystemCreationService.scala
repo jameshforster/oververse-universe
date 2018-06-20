@@ -1,5 +1,7 @@
 package services
 
+import java.util.UUID
+
 import com.google.inject.Inject
 import models.StarSystem
 import models.attributes.{Attributes, ColourAttribute}
@@ -22,7 +24,7 @@ class StarSystemCreationService @Inject()(randomService: RandomService, planetCr
       Attributes.colour -> Json.toJson(colour.name)
     ))
 
-    StarEntity(galaxyName, "Unnamed Star", attributes, coordinates, size * 100)
+    StarEntity(randomService.generateId(), galaxyName, "Unnamed Star", attributes, coordinates, size * 100)
   }
 
   def createPlanets(galaxyName: String,  star: StarEntity, percentChance: Int): Seq[PlanetEntity] = {

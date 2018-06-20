@@ -1,5 +1,7 @@
 package services
 
+import java.util.UUID
+
 import com.google.inject.Inject
 
 import scala.util.Random
@@ -13,5 +15,9 @@ class RandomService @Inject()() {
   def selectRandomElement[A](seq: Seq[A]): Option[A] = {
     if (seq.nonEmpty) Some(seq(generateRandomInteger(seq.size - 1)))
     else None
+  }
+
+  def generateId(): String = {
+    UUID.randomUUID().toString
   }
 }

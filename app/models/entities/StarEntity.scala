@@ -3,7 +3,7 @@ package models.entities
 import models.attributes.{Attributes, ColourAttribute}
 import models.location.{Coordinates, Location}
 
-case class StarEntity(galaxyName: String, name: String, attributes: Attributes, coordinates: Coordinates, signature: BigDecimal) extends Entity {
+case class StarEntity(id: String, galaxyName: String, name: String, attributes: Attributes, coordinates: Coordinates, signature: BigDecimal) extends Entity {
   override val entityType: String = Entity.star
   override val location: Location = Location(galactic = coordinates, system = Coordinates(0, 0))
 
