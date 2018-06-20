@@ -12,6 +12,7 @@ libraryDependencies += "org.reactivemongo" %% "play2-reactivemongo" % "0.13.0-pl
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test
 
 coverageEnabled := true
+coverageExcludedPackages := ".*MongoConnector"
 routesGenerator := InjectedRoutesGenerator
 
 // Adds additional packages into Twirl
