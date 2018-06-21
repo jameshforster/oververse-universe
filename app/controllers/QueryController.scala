@@ -11,7 +11,7 @@ import services.{GalaxyCreationService, QueryService}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class QueryController @Inject()(val controllerComponents: ControllerComponents, queryService: QueryService, mongoConnector: MongoConnector) extends BackendController {
+class QueryController @Inject()(val controllerComponents: ControllerComponents, queryService: QueryService) extends BackendController {
 
   def query(queryType: String): Action[AnyContent] = {
     queryType match {

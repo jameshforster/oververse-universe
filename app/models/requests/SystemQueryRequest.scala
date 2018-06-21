@@ -4,7 +4,7 @@ import models.location.Coordinates
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 
 case class SystemQueryRequest(galaxyName: String,
-                              galacticCoordinates: Option[Coordinates]) extends {
+                              galacticCoordinates: Option[Coordinates] = None) extends {
   def query(): JsObject = {
     JsObject(
       Map(

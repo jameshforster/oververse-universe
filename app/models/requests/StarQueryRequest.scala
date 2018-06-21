@@ -6,9 +6,9 @@ import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 
 case class StarQueryRequest(galaxyName: String,
                             by: String,
-                            name: Option[String],
-                            category: Option[String],
-                            galacticCoordinates: Option[Coordinates]) {
+                            name: Option[String] = None,
+                            category: Option[String] = None,
+                            galacticCoordinates: Option[Coordinates] = None) {
   def query(): JsObject = {
     JsObject(
       Map(

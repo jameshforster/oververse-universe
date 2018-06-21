@@ -7,10 +7,10 @@ import play.api.libs.json.{JsObject, JsValue, Json, OFormat}
 
 case class PlanetQueryRequest(galaxyName: String,
                               by: String,
-                              name: Option[String],
-                              planetType: Option[PlanetType],
-                              galacticCoordinates: Option[Coordinates],
-                              systemCoordinates: Option[Coordinates]) {
+                              name: Option[String] = None,
+                              planetType: Option[PlanetType] = None,
+                              galacticCoordinates: Option[Coordinates] = None,
+                              systemCoordinates: Option[Coordinates] = None) {
 
   def query(): JsObject = {
     JsObject(
