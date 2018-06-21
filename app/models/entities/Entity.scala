@@ -22,6 +22,7 @@ object Entity {
     entityTypeVal match {
       case `star` => StarEntity(idVal, galaxyNameVal, nameVal, attributesVal, locationVal.galactic, signature)
       case `planet` => PlanetEntity(idVal, galaxyNameVal, nameVal, attributesVal, locationVal.galactic, locationVal.system, signature)
+      case `station` => StationEntity(idVal, galaxyNameVal, nameVal, attributesVal, locationVal.galactic, locationVal.system, signature)
       case unknown => throw new UnknownEntityException(unknown)
     }
   }
