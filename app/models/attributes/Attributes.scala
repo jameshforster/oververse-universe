@@ -41,4 +41,9 @@ object Attributes {
   val parent = "parent"
   val planetType = "planetType"
   val children = "children"
+  val armour = "armour"
+  val shields = "shields"
+  val hp = "hp"
+  val pointDefenses = "pd"
+  val weapons = "weapons"
 }
