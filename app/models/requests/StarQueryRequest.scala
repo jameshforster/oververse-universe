@@ -19,7 +19,7 @@ case class StarQueryRequest(galaxyName: String,
         select match {
           case "name" if name.isDefined => Map("name" -> Json.toJson(name.get))
           case "category" if category.isDefined => Map("attributes.attributes.category" -> Json.toJson(category.get))
-          case "coordinates" if galacticCoordinates.isDefined => Map("location.galactic" -> Json.toJson(galacticCoordinates.get))
+          case "location" if galacticCoordinates.isDefined => Map("location.galactic" -> Json.toJson(galacticCoordinates.get))
           case "all" => Map[String, JsValue]()
           case _ => throw new InvalidQueryException(select)
         }
