@@ -23,9 +23,9 @@ object PlanetType {
     attributes => attributes.getAttribute[Int](Attributes.radioactivity).exists(attributeBetween(2, 0)),
     attributes => attributes.getAttribute[Int](Attributes.toxicity).exists(attributeBetween(2, 0)),
     attributes => attributes.getAttribute[Int](Attributes.atmosphere).exists(attributeBetween(4, 2)),
-    attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 1),
-    attributes => attributes.getAttribute[Int](Attributes.breathable).exists(_ > 1),
-    attributes => attributes.getAttribute[Int](Attributes.water).exists(_ < 6)
+    attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(attributeBetween(6, 2)),
+    attributes => attributes.getAttribute[Int](Attributes.breathable).exists(attributeBetween(6, 2)),
+    attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(5, 0))
   )
 
   private val writes = new Writes[PlanetType] {
@@ -101,8 +101,8 @@ object PlanetType {
     override val name: String = "Jungle"
     override val conditions: Seq[Attributes => Boolean] = Seq(
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(4, 3)),
-      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ > 2),
-      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 3),
+      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(6, 3)),
+      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(attributeBetween(6, 4)),
     )
   }
 

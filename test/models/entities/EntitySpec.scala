@@ -3,7 +3,6 @@ package models.entities
 import helpers.{EntityHelper, UnitSpec}
 import models.exceptions.UnknownEntityException
 import models.location.{Coordinates, Location}
-import org.scalatest.enablers.Messaging
 import play.api.libs.json.Json
 
 class EntitySpec extends UnitSpec {
