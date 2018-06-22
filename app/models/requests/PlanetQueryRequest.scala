@@ -22,7 +22,9 @@ case class PlanetQueryRequest(galaxyName: String,
         select match {
           case "name" if name.isDefined => Map("name" -> Json.toJson(name.get))
           case "type" if planetType.isDefined => Map("attributes.attributes.planetType" -> Json.toJson(planetType.get))
-          case "galacticLocation" if galacticCoordinates.isDefined => Map("location.galactic" -> Json.toJson(galacticCoordinates.get))
+          case "location" if galacticCoordinates.isDefined && systemCoordinates.isEmpty => Map(
+            "location.galactic" -> Json.toJson(galacticCoordinates.get)
+          )
           case "location" if galacticCoordinates.isDefined && systemCoordinates.isDefined => Map(
             "location" -> Json.toJson(Location(galacticCoordinates.get, systemCoordinates.get))
           )
