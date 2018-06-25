@@ -28,7 +28,7 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
 
     def generateBaseAttribute(attributes: Attributes, key: String, max: Int, min: Int = 0): Attributes = {
       val result: Int = if (attributes.getAttribute[Int](Attributes.size).exists(_ < 7)) valueOrMax(randomService.generateRandomInteger(max), randomService.generateRandomInteger(max))
-      else randomService.generateRandomInteger(max)
+      else randomService.generateRandomInteger(max, min)
       attributes.addOrUpdate(key, result)
     }
 
