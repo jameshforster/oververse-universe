@@ -13,7 +13,7 @@ libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2
 libraryDependencies += "org.mockito" % "mockito-core" % "2.13.0" % Test
 
 coverageEnabled := true
-coverageExcludedPackages := "<empty>;Reverse.*;.*MongoConnector;.*controllers.javascript;"
+coverageExcludedPackages := "<empty>;Reverse.*;.*MongoConnector;.*controllers.javascript; .*RoutesPrefix;.*Routes"
 routesGenerator := InjectedRoutesGenerator
 
 // Adds additional packages into Twirl
