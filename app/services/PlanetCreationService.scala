@@ -3,7 +3,7 @@ package services
 import com.google.inject.{Inject, Singleton}
 import models.PlanetType
 import models.attributes.Attributes
-import models.entities.{PlanetEntity, StarEntity}
+import models.entities.{Entity, PlanetEntity, StarEntity}
 import models.location.Coordinates
 import play.api.libs.json.JsValue
 
@@ -16,15 +16,15 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
 
   val primaryAttributes: Seq[String] = Seq(Attributes.radioactivity, Attributes.geology, Attributes.minerals)
 
-  def valueOrMin(value: Int, min: Int): Int = {
+  private[services] def valueOrMin(value: Int, min: Int): Int = {
     if (value < min) min else value
   }
 
-  def valueOrMax(value: Int, max: Int): Int = {
+  private[services] def valueOrMax(value: Int, max: Int): Int = {
     if (value > max) max else value
   }
 
-  def generatePrimaryAttributes(coordinates: Coordinates): Attributes = {
+  private[services] def generatePrimaryAttributes(coordinates: Coordinates): Attributes = {
 
     def generateBaseAttribute(attributes: Attributes, key: String, max: Int, min: Int = 0): Attributes = {
       val result: Int = if (attributes.getAttribute[Int](Attributes.size).exists(_ < 7)) valueOrMax(randomService.generateRandomInteger(max), randomService.generateRandomInteger(max))
@@ -45,59 +45,59 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
     }
   }
 
+  private[services] val atmosphereCondition: Condition = attributes => {
+    val size = attributes.getOrException[Int](Attributes.size)
+    if (size > 6) (6, 6)
+    else if (size < 3) (size, 0)
+    else (6, 1)
+  }
+
+  private[services] def temperatureCondition(parent: StarEntity, coordinates: Coordinates): Condition = attributes => {
+    val baseTemp = valueOrMin(parent.size - (coordinates.distanceFromOrigin() / 2).toInt, 0)
+    val modifier = (attributes.getOrException[Int](Attributes.geology) + attributes.getOrException[Int](Attributes.atmosphere)) / 2
+    (valueOrMax(baseTemp + modifier, 6), valueOrMax(baseTemp, 6))
+  }
+
+  private[services] val waterCondition: Condition = attributes => {
+    val temperature = attributes.getOrException[Int](Attributes.temperature)
+    val atmosphere = attributes.getOrException[Int](Attributes.atmosphere)
+    if (temperature > 4 || atmosphere == 0) (0, 0)
+    else (6, 0)
+  }
+
+  private[services] val biosphereCondition: Condition = attributes => {
+    val water = attributes.getOrException[Int](Attributes.water)
+    val radioactivity = attributes.getOrException[Int](Attributes.radioactivity)
+    val geology = attributes.getOrException[Int](Attributes.geology)
+
+    if (water > 1 && radioactivity < 5 && geology < 5) (6, 1)
+    else if (water == 1 && radioactivity < 5 && geology < 5) (3, 0)
+    else (0, 0)
+  }
+
+  private[services] val toxicityCondition: Condition = attributes => {
+    if (attributes.getOrException[Int](Attributes.atmosphere) != 0) (6, 0)
+    else (0, 0)
+  }
+
+  private[services] val breathableCondition: Condition = attributes => {
+    val atmosphere = attributes.getOrException[Int](Attributes.atmosphere)
+    val biosphere = attributes.getOrException[Int](Attributes.biosphere)
+
+    if (biosphere > 0 && atmosphere > 0 && atmosphere < 6) (6, 0)
+    else (0, 0)
+  }
+
+  private[services] val dangerCondition: Condition = attributes => {
+    if (attributes.getOrException[Int](Attributes.breathable) > 1) (6, 0)
+    else (0, 0)
+  }
+
   def generateSecondaryAttributes(parent: StarEntity, coordinates: Coordinates): Attributes = {
-    val atmosphereCondition: Condition = attributes => {
-      val size = attributes.getOrException[Int](Attributes.size)
-      if (size > 6) (6, 6)
-      else if (size < 2) (size, 0)
-      else (6, 1)
-    }
-
-    val temperatureCondition: Condition = attributes => {
-      val baseTemp = valueOrMin(parent.size - (coordinates.distanceFromOrigin() / 2).toInt, 0)
-      val modifier = (attributes.getOrException[Int](Attributes.geology) + attributes.getOrException[Int](Attributes.atmosphere)) / 2
-      (valueOrMax(baseTemp + modifier, 6), valueOrMax(baseTemp, 6))
-    }
-
-    val waterCondition: Condition = attributes => {
-      val temperature = attributes.getOrException[Int](Attributes.temperature)
-      val atmosphere = attributes.getOrException[Int](Attributes.atmosphere)
-      if (temperature > 4 || atmosphere == 0) (0, 0)
-      else (6, 0)
-    }
-
-    val biosphereCondition: Condition = attributes => {
-      val water = attributes.getOrException[Int](Attributes.water)
-      val radioactivity = attributes.getOrException[Int](Attributes.radioactivity)
-      val geology = attributes.getOrException[Int](Attributes.geology)
-
-      if (water > 2 && radioactivity < 5 && geology < 5) (6, 1)
-      else if (water == 2 && radioactivity < 5 && geology < 5) (6, 0)
-      else if (water == 1 && radioactivity < 5 && geology < 5) (3, 0)
-      else (0, 0)
-    }
-
-    val toxicityCondition: Condition = attributes => {
-      if (attributes.getOrException[Int](Attributes.atmosphere) != 0) (6, 0)
-      else (0, 0)
-    }
-
-    val breathableCondition: Condition = attributes => {
-      val atmosphere = attributes.getOrException[Int](Attributes.atmosphere)
-      val biosphere = attributes.getOrException[Int](Attributes.biosphere)
-
-      if (biosphere > 0 && atmosphere > 0 && atmosphere < 6) (6, 0)
-      else (0, 0)
-    }
-
-    val dangerCondition: Condition = attributes => {
-      if (attributes.getOrException[Int](Attributes.breathable) == 6) (6, 0)
-      else (0, 0)
-    }
 
     val secondaryAttributes: ListMap[String, Condition] = ListMap(
       Attributes.atmosphere -> atmosphereCondition,
-      Attributes.temperature -> temperatureCondition,
+      Attributes.temperature -> temperatureCondition(parent, coordinates),
       Attributes.water -> waterCondition,
       Attributes.biosphere -> biosphereCondition,
       Attributes.toxicity -> toxicityCondition,
@@ -121,15 +121,9 @@ class PlanetCreationService @Inject()(randomService: RandomService) {
       PlanetType.habitableConditions.forall(_.apply(attributes))
     }
 
-    def selectValidType(types: Seq[PlanetType]) = {
-      if (types.nonEmpty) {
-        Some(types(randomService.generateRandomInteger(types.size - 1)))
-      } else None
-    }
-
     PlanetType.extremeTypes.find(_.matchingType(attributes)).getOrElse {
-      if (isHabitable) selectValidType(PlanetType.habitableTypes.filter(_.matchingType(attributes))).getOrElse(PlanetType.Plains)
-      else selectValidType(PlanetType.mainTypes.filter(_.matchingType(attributes))).getOrElse(PlanetType.Barren)
+      if (isHabitable) randomService.selectRandomElement(PlanetType.habitableTypes.filter(_.matchingType(attributes))).getOrElse(PlanetType.Plains)
+      else randomService.selectRandomElement(PlanetType.mainTypes.filter(_.matchingType(attributes))).getOrElse(PlanetType.Barren)
     }
   }
 
