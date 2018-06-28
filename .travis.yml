@@ -6,4 +6,4 @@ scala:
    - 2.12.4
 
 script:
-   - sbt ++$TRAVIS_SCALA_VERSION test
+   - sbt coverage ++$TRAVIS_SCALA_VERSION test
