@@ -1,7 +1,7 @@
-name := """edraved-universe"""
+name := """oververse-universe"""
 organization := "com.tol"
 
-version := "1.0-SNAPSHOT"
+version := "0.1"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -14,6 +14,8 @@ libraryDependencies += "org.mockito" % "mockito-core" % "2.13.0" % Test
 
 coverageEnabled := true
 coverageExcludedPackages := "<empty>;Reverse.*;.*MongoConnector;.*controllers.javascript; .*RoutesPrefix;.*Routes"
+coverageMinimum := 100
+coverageFailOnMinimum := true
 routesGenerator := InjectedRoutesGenerator
 
 // Adds additional packages into Twirl
