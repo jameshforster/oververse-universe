@@ -1,7 +1,5 @@
 package services
 
-import java.util.UUID
-
 import com.google.inject.Inject
 import models.StarSystem
 import models.attributes.{Attributes, ColourAttribute}
@@ -27,10 +25,10 @@ class StarSystemCreationService @Inject()(randomService: RandomService, planetCr
     StarEntity(randomService.generateId(), galaxyName, "Unnamed Star", attributes, coordinates, size * 100)
   }
 
-  def createPlanets(galaxyName: String,  star: StarEntity, percentChance: Int): Seq[PlanetEntity] = {
+  def createPlanets(galaxyName: String, star: StarEntity, percentChance: Int): Seq[PlanetEntity] = {
     def applyChance(planets: Seq[PlanetEntity], x: Int, y: Int): Seq[PlanetEntity] = {
       val coordinates = Coordinates(x, y)
-      if (planets.forall(_.orbitalCoordinates.distanceFromOrigin().toInt != coordinates.distanceFromOrigin().toInt) && randomService.generateRandomInteger(100, 1) <= percentChance)
+      if (planets.forall(_.orbitalCoordinates.distanceFromOrigin().toInt != coordinates.distanceFromOrigin().toInt && coordinates.distanceFromOrigin() != 0) && randomService.generateRandomInteger(100, 1) <= percentChance)
         planets ++ Seq(planetCreationService.createPlanet(galaxyName, star, Coordinates(x, y)))
       else
         planets
