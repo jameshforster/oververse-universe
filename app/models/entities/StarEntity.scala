@@ -1,11 +1,11 @@
 package models.entities
 
 import models.attributes.{Attributes, ColourAttribute}
-import models.location.{Coordinates, ExternalLocation, Location}
+import models.location.{Coordinates, Location}
 
-case class StarEntity(name: String, attributes: Attributes, coordinates: Coordinates, signature: BigDecimal) extends Entity {
+case class StarEntity(id: String, galaxyName: String, name: String, attributes: Attributes, coordinates: Coordinates, signature: BigDecimal) extends Entity {
   override val entityType: String = Entity.star
-  override val location: Location = ExternalLocation(sector = coordinates, system = Coordinates(0, 0), area = Coordinates(0, 0))
+  override val location: Location = Location(galactic = coordinates, system = Coordinates(0, 0))
 
   val size: Int = attributes.getOrException[Int](Attributes.size)
   val colour: ColourAttribute = ColourAttribute(attributes.getOrException[String](Attributes.colour))
@@ -13,12 +13,14 @@ case class StarEntity(name: String, attributes: Attributes, coordinates: Coordin
     if (colour == ColourAttribute.black) "Black Hole"
     else if (colour == ColourAttribute.neutron) "Neutron Star"
     else {
-      s"${colour.name} ${size match {
-        case 1|2 => "Dwarf"
-        case 3|4|5|6 => "Star"
-        case 7|8|9 => "Giant"
-        case 10 => "Supergiant"
-      }}"
+      s"${colour.name} ${
+        size match {
+          case 1 | 2 => "Dwarf"
+          case 3 | 4 | 5 | 6 => "Star"
+          case 7 | 8 | 9 => "Giant"
+          case 10 => "Supergiant"
+        }
+      }"
     }
   }
 }

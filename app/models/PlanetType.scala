@@ -23,9 +23,9 @@ object PlanetType {
     attributes => attributes.getAttribute[Int](Attributes.radioactivity).exists(attributeBetween(2, 0)),
     attributes => attributes.getAttribute[Int](Attributes.toxicity).exists(attributeBetween(2, 0)),
     attributes => attributes.getAttribute[Int](Attributes.atmosphere).exists(attributeBetween(4, 2)),
-    attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 1),
-    attributes => attributes.getAttribute[Int](Attributes.breathable).exists(_ > 1),
-    attributes => attributes.getAttribute[Int](Attributes.water).exists(_ < 6)
+    attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(attributeBetween(6, 2)),
+    attributes => attributes.getAttribute[Int](Attributes.breathable).exists(attributeBetween(6, 2)),
+    attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(5, 0))
   )
 
   private val writes = new Writes[PlanetType] {
@@ -101,8 +101,8 @@ object PlanetType {
     override val name: String = "Jungle"
     override val conditions: Seq[Attributes => Boolean] = Seq(
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(4, 3)),
-      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ > 2),
-      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 3),
+      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(6, 3)),
+      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(attributeBetween(6, 4)),
     )
   }
 
@@ -110,7 +110,7 @@ object PlanetType {
     override val name: String = "Marsh"
     override val conditions: Seq[Attributes => Boolean] = Seq(
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(4, 3)),
-      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(_ > 3)
+      attributes => attributes.getAttribute[Int](Attributes.biosphere).exists(attributeBetween(6, 4))
     )
   }
 
@@ -128,7 +128,7 @@ object PlanetType {
     override val name: String = "Gaia"
     override val conditions: Seq[Attributes => Boolean] = Seq(
       attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(3, 2)),
-      attributes => attributes.getAttribute[Int](Attributes.water).exists(_ < 5),
+      attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(4, 0)),
     )
   }
 
@@ -147,8 +147,8 @@ object PlanetType {
   object Volcanic extends PlanetType {
     override val name: String = "Volcanic"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ > 1),
-      attributes => attributes.getAttribute[Int](Attributes.geology).exists(_ > 2),
+      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(6, 2)),
+      attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(6, 3)),
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(5, 1))
     )
   }
@@ -164,7 +164,7 @@ object PlanetType {
   object Arctic extends PlanetType {
     override val name: String = "Arctic"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ < 2),
+      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(1, 0)),
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(5, 1))
     )
   }
@@ -172,7 +172,7 @@ object PlanetType {
   object Frozen extends PlanetType {
     override val name: String = "Frozen"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ < 2),
+      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(1, 0)),
       attributes => attributes.getAttribute[Int](Attributes.water).contains(6)
     )
   }
@@ -180,7 +180,7 @@ object PlanetType {
   object Ocean extends PlanetType {
     override val name: String = "Ocean"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(_ > 1),
+      attributes => attributes.getAttribute[Int](Attributes.temperature).exists(attributeBetween(6, 2)),
       attributes => attributes.getAttribute[Int](Attributes.water).contains(6)
     )
   }
@@ -188,7 +188,7 @@ object PlanetType {
   object Mountainous extends PlanetType {
     override val name: String = "Mountainous"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.geology).exists(_ > 2),
+      attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(6, 3)),
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(5, 1))
     )
   }
@@ -196,7 +196,7 @@ object PlanetType {
   object Cavernous extends PlanetType {
     override val name: String = "Cavernous"
     override val conditions: Seq[Attributes => Boolean] = Seq(
-      attributes => attributes.getAttribute[Int](Attributes.geology).exists(_ > 2),
+      attributes => attributes.getAttribute[Int](Attributes.geology).exists(attributeBetween(6, 3)),
       attributes => attributes.getAttribute[Int](Attributes.water).exists(attributeBetween(5, 3))
     )
   }

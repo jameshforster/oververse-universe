@@ -16,6 +16,10 @@ case class Attributes(attributes: Map[String, JsValue]) {
   def addOrUpdate[A](key: String, value: A)(implicit writes: Writes[A]): Attributes = {
     Attributes(attributes + (key -> Json.toJson(value)))
   }
+
+  def removeAttribute(key: String): Attributes = {
+    Attributes(attributes - key)
+  }
 }
 
 object Attributes {
@@ -36,4 +40,10 @@ object Attributes {
   val temperature = "temperature"
   val parent = "parent"
   val planetType = "planetType"
+  val children = "children"
+  val armour = "armour"
+  val shields = "shields"
+  val hp = "hp"
+  val pointDefenses = "pd"
+  val weapons = "weapons"
 }

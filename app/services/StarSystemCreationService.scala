@@ -9,7 +9,7 @@ import play.api.libs.json.Json
 
 class StarSystemCreationService @Inject()(randomService: RandomService, planetCreationService: PlanetCreationService) {
 
-  def createStar(coordinates: Coordinates): StarEntity = {
+  def createStar(galaxyName: String, coordinates: Coordinates): StarEntity = {
     val size = randomService.generateRandomInteger(10, 1)
     val colour = size match {
       case 1 | 2 => randomService.selectRandomElement(ColourAttribute.dwarfColours).get
@@ -22,14 +22,14 @@ class StarSystemCreationService @Inject()(randomService: RandomService, planetCr
       Attributes.colour -> Json.toJson(colour.name)
     ))
 
-    StarEntity("Unnamed Star", attributes, coordinates, size * 100)
+    StarEntity(randomService.generateId(), galaxyName, "Unnamed Star", attributes, coordinates, size * 100)
   }
 
-  def createPlanets(star: StarEntity, percentChance: Int): Seq[PlanetEntity] = {
+  def createPlanets(galaxyName: String, star: StarEntity, percentChance: Int): Seq[PlanetEntity] = {
     def applyChance(planets: Seq[PlanetEntity], x: Int, y: Int): Seq[PlanetEntity] = {
       val coordinates = Coordinates(x, y)
-      if (planets.forall(_.orbitalCoordinates.distanceFromOrigin().toInt != coordinates.distanceFromOrigin().toInt) && randomService.generateRandomInteger(100, 1) <= percentChance)
-        planets ++ Seq(planetCreationService.createPlanet(star, Coordinates(x, y)))
+      if (planets.forall(_.orbitalCoordinates.distanceFromOrigin().toInt != coordinates.distanceFromOrigin().toInt && coordinates.distanceFromOrigin() != 0) && randomService.generateRandomInteger(100, 1) <= percentChance)
+        planets ++ Seq(planetCreationService.createPlanet(galaxyName, star, Coordinates(x, y)))
       else
         planets
     }
@@ -44,13 +44,13 @@ class StarSystemCreationService @Inject()(randomService: RandomService, planetCr
     applyChanceToAll(Seq())
   }
 
-  def createSystem(coordinates: Coordinates, planetChance: Int): StarSystem = {
-    val star = createStar(coordinates)
+  def createSystem(galaxyName: String, coordinates: Coordinates, planetChance: Int): StarSystem = {
+    val star = createStar(galaxyName, coordinates)
     val isPlanetSupporting = star.colour != ColourAttribute.black && star.colour != ColourAttribute.neutron
     val planets = if (isPlanetSupporting) {
-      createPlanets(star, planetChance).sortWith((x, y) => x.orbitalCoordinates.distanceFromOrigin() > y.orbitalCoordinates.distanceFromOrigin())
+      createPlanets(galaxyName, star, planetChance).sortWith((x, y) => x.orbitalCoordinates.distanceFromOrigin() > y.orbitalCoordinates.distanceFromOrigin())
     } else Seq()
 
-    StarSystem(star, planets, Seq())
+    StarSystem(star, planets, Seq(), Seq())
   }
 }
