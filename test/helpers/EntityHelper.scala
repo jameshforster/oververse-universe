@@ -1,6 +1,9 @@
 package helpers
 
+import models.StarSystem
 import models.attributes.{Attributes, VariableAttribute}
+import models.entities.{PlanetEntity, StarEntity, StationEntity}
+import models.location.Coordinates
 
 object EntityHelper {
 
@@ -36,4 +39,9 @@ object EntityHelper {
   def validStarAttributes(size: Int, colour: String): Attributes = Attributes.emptyAttributes
     .addOrUpdate(Attributes.size, size)
     .addOrUpdate(Attributes.colour, colour)
+
+  val testStar = StarEntity("fakeId", "galaxyName", "name", EntityHelper.validStarAttributes(3, "Red"), Coordinates(1, 2), 300)
+  val testPlanet = PlanetEntity("fakeId", "galaxyName", "name", EntityHelper.validPlanetAttributes, Coordinates(1, 2), Coordinates(3, 4), 10)
+  val testStation = StationEntity("fakeId", "galaxyName", "name", EntityHelper.validStationAttributes, Coordinates(1, 2), Coordinates(3, 4), 10)
+  val testSystem = StarSystem(testStar, Seq(testPlanet, testPlanet), Seq(testStation), Seq())
 }
