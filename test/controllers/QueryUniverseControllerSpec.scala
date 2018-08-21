@@ -1,7 +1,7 @@
 package controllers
 
 import helpers.{EntityHelper, UnitSpec}
-import models.StarSystem
+import models.{GalaxyModel, StarSystem}
 import models.entities.{PlanetEntity, StarEntity}
 import models.location.{Coordinates, Location}
 import models.requests.{PlanetQueryRequest, StarQueryRequest, SystemQueryRequest}
@@ -13,15 +13,17 @@ import play.api.libs.json.Json
 import play.api.mvc.ControllerComponents
 import services.QueryService
 import play.api.http.Status._
+
 import scala.concurrent.Future
 
-class QueryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
+class QueryUniverseControllerSpec extends UnitSpec with GuiceOneAppPerSuite with MockitoSugar {
 
   val testPlanet = PlanetEntity("testId", "testGalaxyName", "testName", EntityHelper.validPlanetAttributes, Coordinates(1, 1), Coordinates(2, 2), 50)
   val testStar = StarEntity("testId", "testGalaxyName", "testName", EntityHelper.validStarAttributes(4, "Red"), Coordinates(1, 1), 400)
   val testSystem = StarSystem(testStar, Seq(testPlanet), Seq(), Seq())
+  val testGalaxy = GalaxyModel("testGalaxyName", 5, active = false, test = true)
 
-  def createTestController(success: Boolean): QueryController = {
+  def createTestController(success: Boolean): QueryUniverseController = {
 
     val components = fakeApplication().injector.instanceOf[ControllerComponents]
     val service = mock[QueryService]
@@ -33,6 +35,8 @@ class QueryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         .thenReturn(Future.successful(Seq(testStar)))
       when(service.querySystems(ArgumentMatchers.any[SystemQueryRequest]))
         .thenReturn(Future.successful(Seq(testSystem)))
+      when(service.getGalaxies)
+        .thenReturn(Future.successful(Seq(testGalaxy)))
     } else {
       when(service.queryPlanets(ArgumentMatchers.any[PlanetQueryRequest]))
         .thenReturn(Future.failed(new Exception("test error")))
@@ -40,9 +44,11 @@ class QueryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
         .thenReturn(Future.failed(new Exception("test error")))
       when(service.querySystems(ArgumentMatchers.any[SystemQueryRequest]))
         .thenReturn(Future.failed(new Exception("test error")))
+      when(service.getGalaxies)
+        .thenReturn(Future.failed(new Exception("test error")))
     }
 
-    new QueryController(components, service)
+    new QueryUniverseController(components, service)
   }
 
   "Calling the .query method" should {
@@ -100,6 +106,30 @@ class QueryControllerSpec extends UnitSpec with GuiceOneAppPerSuite with Mockito
 
       "the service returns a failure for a system" in {
         val result = controller.query("system")(fakeRequestWithBody(Json.toJson(SystemQueryRequest("testGalaxyName", Some(Coordinates(1, 1))))))
+
+        the[Exception] thrownBy await(result) should have message "test error"
+      }
+    }
+  }
+
+  "Calling the .getGalaxies method" should {
+
+    "return an Ok response" when {
+      val controller = createTestController(true)
+
+      "no errors occur" in {
+        val result = controller.getGalaxies()(fakeRequest)
+
+        statusOf(result) shouldBe OK
+        bodyOf(result) shouldBe Json.toJson(Seq(testGalaxy)).toString()
+      }
+    }
+
+    "return an exception" when {
+      val controller = createTestController(false)
+
+      "any errors occur" in {
+        val result = controller.getGalaxies()(fakeRequest)
 
         the[Exception] thrownBy await(result) should have message "test error"
       }

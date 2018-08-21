@@ -2,7 +2,7 @@ package services
 
 import connectors.MongoConnector
 import helpers.{EntityHelper, UnitSpec}
-import models.StarSystem
+import models.{GalaxyModel, StarSystem}
 import models.entities.{Entity, PlanetEntity, StarEntity, StationEntity}
 import models.location.Coordinates
 import models.requests.{PlanetQueryRequest, StarQueryRequest, SystemQueryRequest}
@@ -19,12 +19,16 @@ class QueryServiceSpec extends UnitSpec with MockitoSugar {
   val testStar: StarEntity = StarEntity("id", "galaxyName", "name", EntityHelper.validStarAttributes(5, "Red"), Coordinates(1, 2), 500)
   val testStar2: StarEntity = testStar.copy(coordinates = Coordinates(2, 3))
   val testStation: StationEntity = StationEntity("id", "galaxyName", "name", EntityHelper.validStationAttributes, Coordinates(1, 2), Coordinates(3,4), 10)
+  val testGalaxy = GalaxyModel("testGalaxyName", 5, active = false, test = true)
 
-  def setupService(response: Future[Seq[Entity]]): QueryService = {
+  def setupService(response: Future[Seq[Entity]], galaxies: Future[Seq[GalaxyModel]] = Future.successful(Seq.empty)): QueryService = {
     val mockMongoConnector = mock[MongoConnector]
 
     when(mockMongoConnector.findAllData[Entity](ArgumentMatchers.eq("entities"), ArgumentMatchers.any[JsObject])(ArgumentMatchers.any[Reads[Entity]]))
       .thenReturn(response)
+
+    when(mockMongoConnector.findAllData[GalaxyModel](ArgumentMatchers.eq("galaxies"),  ArgumentMatchers.any[JsObject])(ArgumentMatchers.any[Reads[GalaxyModel]]))
+      .thenReturn(galaxies)
 
     new QueryService(mockMongoConnector)
   }
@@ -117,6 +121,30 @@ class QueryServiceSpec extends UnitSpec with MockitoSugar {
         await(result) shouldBe Seq(
           StarSystem(testStar, Seq(testPlanet), Seq(testStation), Seq()),
           StarSystem(testStar2, Seq(testPlanet2, testPlanet2), Seq(), Seq()))
+      }
+    }
+  }
+
+  "Calling .getGalaxies" should {
+
+    "return a valid list of galaxies" when {
+
+      "no galaxies are found" in {
+        val result = setupService(Future.successful(Seq())).getGalaxies
+
+        await(result) shouldBe Seq()
+      }
+
+      "one galaxy is found" in {
+        val result = setupService(Future.successful(Seq()), Future.successful(Seq(testGalaxy))).getGalaxies
+
+        await(result) shouldBe Seq(testGalaxy)
+      }
+
+      "multiple galaxies are found" in {
+        val result = setupService(Future.successful(Seq()), Future.successful(Seq(testGalaxy, testGalaxy))).getGalaxies
+
+        await(result) shouldBe Seq(testGalaxy, testGalaxy)
       }
     }
   }

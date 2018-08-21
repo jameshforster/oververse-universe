@@ -10,4 +10,5 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 POST    /admin/create-galaxy        controllers.AdminController.generateGalaxy
 
 # Main routes
-POST    /universe/query/:queryType  controllers.QueryController.query(queryType)
+GET     /universe/query/galaxies    controllers.QueryUniverseController.getGalaxies
+POST    /universe/query/:queryType  controllers.QueryUniverseController.query(queryType)

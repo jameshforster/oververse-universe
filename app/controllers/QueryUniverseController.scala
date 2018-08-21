@@ -11,7 +11,7 @@ import services.{GalaxyCreationService, QueryService}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class QueryController @Inject()(val controllerComponents: ControllerComponents, queryService: QueryService) extends BackendController {
+class QueryUniverseController @Inject()(val controllerComponents: ControllerComponents, queryService: QueryService) extends BackendController {
 
   def query(queryType: String): Action[AnyContent] = {
     queryType match {
@@ -19,6 +19,12 @@ class QueryController @Inject()(val controllerComponents: ControllerComponents, 
       case "system" => systemQuery
       case "star" => starQuery
       case _ => nonMatchingQuery(queryType)
+    }
+  }
+
+  val getGalaxies: Action[AnyContent] = Action.async { implicit request =>
+    queryService.getGalaxies map { galaxies =>
+      Ok(Json.toJson(galaxies))
     }
   }
 

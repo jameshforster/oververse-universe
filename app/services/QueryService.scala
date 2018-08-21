@@ -2,12 +2,10 @@ package services
 
 import com.google.inject.Inject
 import connectors.MongoConnector
-import models.StarSystem
 import models.entities.{Entity, PlanetEntity, StarEntity, StationEntity}
-import models.location.Coordinates
 import models.requests.{PlanetQueryRequest, StarQueryRequest, SystemQueryRequest}
-import play.api.Logger
-import play.api.libs.json.{JsObject, Json}
+import models.{GalaxyModel, StarSystem}
+import play.api.libs.json.JsObject
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -52,5 +50,9 @@ class QueryService @Inject()(mongoConnector: MongoConnector) {
     }
 
     mongoConnector.findAllData[Entity]("entities", systemQueryRequest.query()).map(getSystems)
+  }
+
+  def getGalaxies: Future[Seq[GalaxyModel]] = {
+    mongoConnector.findAllData[GalaxyModel]("galaxies", JsObject(Seq.empty))
   }
 }
